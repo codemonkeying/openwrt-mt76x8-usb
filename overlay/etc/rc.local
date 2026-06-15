@@ -1,0 +1,22 @@
+#!/bin/sh
+# rc.local — runs on every boot AFTER all init.d scripts.
+#
+# Hak5 WiFi Pineapple Mk7 (MT7628AN): the external USB-A port's VBUS is
+# gated by GPIO 5 (active-low). The DTB declares this as a gpio-export
+# node with default output=1, so the `gpio-export` package should assert
+# it at boot. If for any reason gpio-export hasn't asserted (package not
+# installed, sysfs node not yet ready), this re-asserts unconditionally.
+# Idempotent: writing 1 when it's already 1 is a no-op.
+
+# Wait briefly for the sysfs node to appear (in case gpio-export hasn't
+# created it yet at this point in boot).
+for n in 1 2 3 4 5; do
+    [ -e /sys/class/gpio/usb-power/value ] && break
+    sleep 1
+done
+
+if [ -e /sys/class/gpio/usb-power/value ]; then
+    echo 1 > /sys/class/gpio/usb-power/value 2>/dev/null
+fi
+
+exit 0
