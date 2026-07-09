@@ -14,7 +14,6 @@ package list and a small `files/` overlay.
 * Stock OpenWrt defaults: LAN at `192.168.1.1/24`, no root password, LuCI on port 80, dropbear SSH on LAN side
 * `wpad-basic-mbedtls` (WPA2) wifi stack
 * LuCI web UI (`luci`, `luci-app-firewall`, `luci-app-package-manager`)
-* Wireguard kernel module + cryptographic primitives (no userspace `wireguard-tools` — `apk add` post-flash if needed)
 * Wifi auditing helpers: `aircrack-ng`, `airmon-ng`, `hcxdumptool`, `tcpdump`
 * Editors: `nano`
 * Network helpers: `ethtool`, `htop`, `mtr-json`, `ip-full`
