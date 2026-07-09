@@ -45,19 +45,7 @@ unconditionally on every boot as belt-and-braces. The first-boot
 `uci-defaults` script also asserts it once so the external port works
 without a reboot.
 
-## What the image deliberately does NOT contain
-
-This image is **sterile of operator-specific configuration**. It is
-explicitly safe to publish and to flash on a fresh device. No bundled:
-
-* SSH keys (`authorized_keys` is absent — first boot has the OpenWrt
-  default empty-password dropbear on LAN)
-* WireGuard private/public keys, peer table, or endpoints
-* tinc keys, host files, or configuration
-* OpenWISP URL, UUID, or shared secret
-* MWAN3 policy or interface configuration
-* Carrier SSIDs, PSKs, dnsmasq pins, or DHCP reservations
-* Hostnames other than the neutral default `mt76x8-router`
+## Default configuration
 
 The boot uci-defaults script sets `hostname=mt76x8-router` and
 `timezone=UTC`. Change them post-flash to suit your deployment.
