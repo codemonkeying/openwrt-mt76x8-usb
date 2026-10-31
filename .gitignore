@@ -1,0 +1,15 @@
+*.bin
+*.bin.gz
+*.tar
+*.tar.gz
+*.tar.zst
+bin/
+tmp/
+build_dir/
+staging_dir/
+.config
+authorized_keys
+*_key
+*_key.pub
+id_*
+*.priv

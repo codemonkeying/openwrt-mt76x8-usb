@@ -1,0 +1,8 @@
+#!/bin/sh
+# External USB-A power is gated by GPIO 5. Make sure it's on every boot.
+for n in 1 2 3 4 5; do
+    [ -e /sys/class/gpio/usb-power/value ] && break
+    sleep 1
+done
+[ -e /sys/class/gpio/usb-power/value ] && echo 1 > /sys/class/gpio/usb-power/value 2>/dev/null
+exit 0
