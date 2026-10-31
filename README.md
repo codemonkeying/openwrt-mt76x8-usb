@@ -9,34 +9,7 @@ Vanilla OpenWrt 25.12.6 for the Hak5 WiFi Pineapple Mk7 (`ramips/mt76x8`), with 
 - USB HID and storage (ext4, vfat, exfat, ntfs3)
 - LuCI, nano, htop, mtr, tcpdump, aircrack-ng, hcxdumptool
 
-The external USB-A port's power is gated by GPIO 5. Some boots leave it off, so `overlay/etc/rc.local` switches it on every boot.
-
-## Build
-
-Uses the official ImageBuilder (no compiling):
-
-```sh
-wget https://downloads.openwrt.org/releases/25.12.6/targets/ramips/mt76x8/openwrt-imagebuilder-25.12.6-ramips-mt76x8.Linux-x86_64.tar.zst
-tar --use-compress-program=unzstd -xf openwrt-imagebuilder-*.tar.zst && cd openwrt-imagebuilder-*/
-cp -r ../overlay files
-PKGS=$(python3 -c 'import json;print(" ".join(json.load(open("../build/asu-build-req.json"))["packages"]))')
-make image PROFILE=hak5_wifi-pineapple-mk7 PACKAGES="$PKGS" FILES=files
-```
-
-Image lands in `bin/targets/ramips/mt76x8/`.
-
-### Recovery image (initramfs)
-
-The ImageBuilder can't make it; it needs a full source build (about 15 GB disk, 1-4 hours):
-
-```sh
-git clone --depth 1 --branch v25.12.6 https://github.com/openwrt/openwrt.git && cd openwrt
-./scripts/feeds update -a && ./scripts/feeds install -a
-cp ../build/initramfs.config .config && make defconfig
-make -j$(nproc) download && make -j$(nproc)
-```
-
-Output: `bin/targets/ramips/mt76x8/*-initramfs-kernel.bin`.
+The external USB-A port's power is gated by GPIO 5, exported as `/sys/class/gpio/usb-power`. Stock 25.12 leaves it off, so `overlay/etc/rc.local` switches `usb-power` on every boot.
 
 ## Flash
 
@@ -89,6 +62,33 @@ Both images were tested on real hardware: recovery page -> initramfs -> sysupgra
 ### Going back to Hak5 firmware
 
 Do steps 1-5 of "If you're stuck", but in step 6 upload Hak5's own recovery file from the [Hak5 Download Portal](https://downloads.hak5.org/pineapple) instead of the initramfs. Then follow Hak5's setup at `http://172.16.42.1:1471`.
+
+## Build
+
+Uses the official ImageBuilder (no compiling). Download and extract it inside the repo root, so `../overlay` and `../build` resolve:
+
+```sh
+wget https://downloads.openwrt.org/releases/25.12.6/targets/ramips/mt76x8/openwrt-imagebuilder-25.12.6-ramips-mt76x8.Linux-x86_64.tar.zst
+tar --use-compress-program=unzstd -xf openwrt-imagebuilder-*.tar.zst && cd openwrt-imagebuilder-*/
+cp -r ../overlay files   # run from the repo root clone, so ../overlay exists
+PKGS=$(python3 -c 'import json;print(" ".join(json.load(open("../build/asu-build-req.json"))["packages"]))')
+make image PROFILE=hak5_wifi-pineapple-mk7 PACKAGES="$PKGS" FILES=files
+```
+
+Image lands in `bin/targets/ramips/mt76x8/`.
+
+### Recovery image (initramfs)
+
+The ImageBuilder can't make it; it needs a full source build (about 15 GB disk, 1-4 hours):
+
+```sh
+git clone --depth 1 --branch v25.12.6 https://github.com/openwrt/openwrt.git && cd openwrt
+./scripts/feeds update -a && ./scripts/feeds install -a
+cp ../build/initramfs.config .config && make defconfig
+make -j$(nproc) download && make -j$(nproc)
+```
+
+Output: `bin/targets/ramips/mt76x8/*-initramfs-kernel.bin`.
 
 ## Source
 
